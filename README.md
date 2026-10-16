@@ -11,7 +11,7 @@ in touch and keeping important care information together.
 Our ambition is straightforward: make it easier for patients and doctors to
 connect and keep care coordinated.
 
-**Launching in Kenya on 20 December 2026.** Public appointments and consultations
+**Planned launch in Kenya: 20 December 2026.** Public appointments and consultations
 are not yet available.
 
 **Website domain:** [medizoom.care](https://medizoom.care)  
@@ -33,6 +33,15 @@ Medizoom is bringing these steps together in one mobile experience.
 
 These describe the platform we are building, not services currently offered
 through this website.
+
+## The Planned Patient Journey
+
+1. Explore doctor profiles and specialties.
+2. Select an available time, review the consultation fee and complete booking.
+3. Attend an online consultation, with in-person assessment where needed.
+4. Return to visit records, any prescription issued and the conversation with your doctor.
+
+Online care is not suitable for every concern and does not guarantee a prescription.
 
 ## For Patients
 
@@ -68,6 +77,12 @@ public availability.
 
 This website introduces Medizoom. It does not provide consultations, accept
 bookings or collect clinical information.
+
+The planned doctor onboarding process includes reviewing registration certificates,
+current annual practising licences and specialist evidence where applicable,
+checking submitted details against the official KMPDC register and reviewing
+renewal evidence. This is a description of the planned process, not a claim of
+completed checks, regulatory approval or endorsement.
 
 ## Get in Touch
 

@@ -1,4 +1,4 @@
-# Optional future hosting configuration. No deployment is performed by this file.
+# Netlify publishes public/ when the connected production branch is pushed.
 [build]
   publish = "public"
 
