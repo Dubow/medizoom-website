@@ -16,7 +16,9 @@ async function main() {
       ['mobile', 390, 844], ['small-mobile', 320, 568], ['landscape', 844, 390],
       ['large-mobile', 480, 800], ['small-tablet', 600, 800],
       ['laptop', 1366, 768], ['short-desktop', 1440, 650],
-      ['short-tablet', 768, 640], ['small-landscape', 600, 390]
+      ['short-tablet', 768, 640], ['small-landscape', 600, 390],
+      ['narrow-mobile', 280, 653], ['compact-mobile', 360, 640],
+      ['navigation-breakpoint', 851, 700], ['compact-desktop', 1024, 768]
     ]) {
       const page = await browser.newPage({ viewport: { width, height }, deviceScaleFactor: 1 });
       await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -61,8 +63,10 @@ async function main() {
       assert.equal(await page.locator('.main-nav a').count(), 5);
       assert.equal(await page.locator('footer nav:not(.legal-links), .image-credit').count(), 0);
       assert.equal(await page.locator('footer .legal-links a').count(), 3);
-      assert.equal(await page.locator('time[datetime="2026-12-20"]').count(), 4);
-      assert.equal((await page.locator('meta[name="description"]').getAttribute('content')).includes('20 December 2026'), true);
+      assert.equal(await page.locator('time[datetime="2027-02"]').count(), 4);
+      for (const meta of ['meta[name="description"]', 'meta[property="og:description"]']) {
+        assert.match(await page.locator(meta).getAttribute('content'), /Targeting February 2027/);
+      }
       const preview = page.locator('#product-preview');
       assert.equal(await preview.getByRole('heading', { name: 'A closer look at MediZoom.' }).count(), 1);
       // The owner chose text-only. Change this only with explicit image approval.
@@ -168,6 +172,10 @@ async function main() {
 async function checkPages(browser) {
   const files = ['index.html', 'privacy.html', 'terms.html', 'medical-disclaimer.html'];
   const sources = Object.fromEntries(files.map(file => [file, fs.readFileSync(path.join('public', file), 'utf8')]));
+  for (const [file, source] of Object.entries({ ...sources, 'README.md': fs.readFileSync('README.md', 'utf8') })) {
+    assert.doesNotMatch(source, /20 December 2026|December 20,? 2026|2026-12-20/, file + ' obsolete launch date');
+    assert.doesNotMatch(source, /Medizoom|Medi<span>zoom<\/span>/, file + ' inconsistent brand spelling');
+  }
   const titles = new Set();
   let accessibilityScans = 0;
   for (const file of files) {
@@ -178,13 +186,66 @@ async function checkPages(browser) {
       page.on('pageerror', error => errors.push(error.message));
       await page.goto(pathToFileURL(path.resolve('public', file)).href);
       assert.equal(await page.locator('h1').count(), 1, file + ' single main heading');
+      for (const link of await page.locator('a[href="terms.html"]').all()) {
+        assert.equal(await link.innerText(), 'Terms and Services', file + ' consistent terms link label');
+      }
       if (file === 'privacy.html') {
         const notice = await page.locator('main').innerText();
-        assert.match(notice, /Netlify/);
-        assert.match(notice, /Namecheap Private Email/);
+        assert.doesNotMatch(sources[file], /Netlify|Namecheap|netlify\.com|namecheap\.com|Aluta/i);
+        assert.match(notice, /Website hosting and delivery providers/);
+        assert.match(notice, /Email delivery and storage providers/);
         assert.match(notice, /outside Kenya/);
         assert.match(notice, /technical request information/);
-        assert.match(notice, /data processing agreement/);
+        assert.match(notice, /recipients, processing locations and safeguards/);
+        assert.match(notice, /requests for private demonstrations/);
+        assert.match(notice, /does not cover patient accounts, clinical records, consultations or payments/);
+        assert.match(notice, /Office of the Data Protection Commissioner/);
+        const sections = await page.locator('main h2').allTextContents();
+        assert.equal(sections.length, 14);
+        sections.forEach((heading, index) => assert.ok(heading.startsWith(`${index + 1}. `), 'Numbered privacy sections'));
+      }
+      if (file === 'terms.html') {
+        const terms = await page.locator('main').innerText();
+        assert.equal(await page.title(), 'Terms and Services | MediZoom');
+        assert.equal(await page.locator('h1').innerText(), 'Terms and Services');
+        assert.equal(await page.locator('time[datetime="2027-02"]').count(), 1);
+        assert.match(terms, /not a confirmed opening date/);
+        assert.match(terms, /does not create an account or grant automatic application access/);
+        assert.match(terms, /not terms for patient care, doctor participation, booking, payment or use of the mobile application/);
+        assert.match(terms, /website does not provide medical advice, diagnosis, treatment or prescriptions/);
+        assert.match(terms, /do not require mandatory arbitration or a waiting period/);
+        assert.doesNotMatch(sources[file], /Aluta|Netlify|Namecheap|NCIA|KES 10,000/i);
+        const sections = await page.locator('main h2').allTextContents();
+        assert.equal(sections.length, 12);
+        sections.forEach((heading, index) => assert.ok(heading.startsWith(`${index + 1}. `), 'Numbered terms sections'));
+      }
+      if (file === 'medical-disclaimer.html') {
+        const disclaimer = await page.locator('main').innerText();
+        assert.equal(await page.title(), 'Medical Disclaimer | MediZoom');
+        assert.equal(await page.locator('.document-meta time').getAttribute('datetime'), '2026-10-17');
+        const emergencyNotice = page.locator('main .care-note');
+        assert.equal(await emergencyNotice.isVisible(), true);
+        assert.match(await emergencyNotice.innerText(), /Not for emergencies\./);
+        assert.match(await emergencyNotice.innerText(), /Do not wait for a reply from MediZoom/);
+        assert.equal(await emergencyNotice.evaluate(el => Boolean(
+          el.compareDocumentPosition(document.querySelector('main h2')) & Node.DOCUMENT_POSITION_FOLLOWING
+        )), true, 'Emergency notice precedes numbered disclaimer sections');
+        assert.match(disclaimer, /Public consultations and bookings are not open/);
+        assert.match(disclaimer, /does not establish a patient-doctor relationship/);
+        assert.match(disclaimer, /not medical consultations, assessments or treatment sessions/);
+        assert.match(disclaimer, /does not confirm a clinical appointment or grant automatic application access/);
+        assert.match(disclaimer, /in-person examination, tests or a referral/);
+        assert.match(disclaimer, /does not guarantee a prescription, diagnosis, referral or particular health outcome/);
+        assert.match(disclaimer, /does not claim that any doctor has already been verified/);
+        assert.match(disclaimer, /not monitored as an emergency or clinical service/);
+        assert.match(disclaimer, /not a photograph of a participating MediZoom doctor or a real patient consultation/);
+        assert.match(disclaimer, /does not waive professional duties/);
+        assert.match(disclaimer, /not consent to treatment/);
+        assert.equal(await page.getByRole('link', { name: /official Kenya Medical Practitioners/ }).getAttribute('href'), 'https://registers.kmpdc.go.ke/');
+        assert.doesNotMatch(sources[file], /Aluta|Netlify|Namecheap/i);
+        const sections = await page.locator('main h2').allTextContents();
+        assert.equal(sections.length, 10);
+        sections.forEach((heading, index) => assert.ok(heading.startsWith(`${index + 1}. `), 'Numbered disclaimer sections'));
       }
       if (file === 'index.html') {
         const promotionalCopy = await page.locator('.hero, .platform, .journey, .product-preview, .audiences, .about, .contact').allTextContents();
@@ -220,6 +281,11 @@ async function checkPages(browser) {
       );
       for (const href of links) {
         const url = new URL(href);
+        if (url.protocol === 'mailto:') {
+          assert.equal(url.pathname, 'support@medizoom.care', file + ' approved email recipient');
+          assert.equal(url.searchParams.has('cc') || url.searchParams.has('bcc'), false);
+          assert.doesNotMatch(decodeURIComponent(url.search), /[\r\n]/, 'No email header injection');
+        }
         if (url.protocol !== 'file:') continue;
         assert.ok(fs.existsSync(fileURLToPath(url)), 'Missing local target: ' + href);
         if (url.hash) {

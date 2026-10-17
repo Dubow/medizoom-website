@@ -1,18 +1,18 @@
-# Medizoom
+# MediZoom
 
 ### Care, closer to you.
 
 **Connecting patients, doctors and the next step in care.**
 
-Medizoom is building a digital health platform for Kenya. We bring the journey
+MediZoom is building a digital health platform for Kenya. We bring the journey
 around a consultation into focus: finding a doctor, arranging a visit, staying
 in touch and keeping important care information together.
 
 Our ambition is straightforward: make it easier for patients and doctors to
 connect and keep care coordinated.
 
-**Planned launch in Kenya: 20 December 2026.** Public appointments and consultations
-are not yet available.
+**Targeting February 2027 for launch in Kenya.** This is a target, not a confirmed
+opening date. Public appointments and consultations are not yet available.
 
 **Website domain:** [medizoom.care](https://medizoom.care)  
 **Contact:** [support@medizoom.care](mailto:support@medizoom.care)
@@ -23,7 +23,7 @@ Healthcare does not begin and end with an appointment. It includes the choices
 before a consultation, the conversation itself and the information people need
 afterwards.
 
-Medizoom is bringing these steps together in one mobile experience.
+MediZoom is bringing these steps together in one mobile experience.
 
 | Find care | Connect with your doctor | Keep care organized |
 | --- | --- | --- |
@@ -71,11 +71,11 @@ That responsibility guides our development and preparation for launch.
 
 ## Preparing for Launch
 
-Medizoom is in development. We are refining the patient and doctor experience,
+MediZoom is in development. We are refining the patient and doctor experience,
 completing service integrations and preparing the operational foundations for
 public availability.
 
-This website introduces Medizoom. It does not provide consultations, accept
+This website introduces MediZoom. It does not provide consultations, accept
 bookings or collect clinical information.
 
 The planned doctor onboarding process includes reviewing registration certificates,
@@ -101,7 +101,7 @@ A request does not grant automatic application access.
 
 ## About This Repository
 
-This repository contains Medizoom's public pre-launch website.
+This repository contains MediZoom's public pre-launch website.
 
 For local preview and maintenance, see the [website guide](docs/WEBSITE.md).
 Image provenance is documented in [ASSETS.md](ASSETS.md).

@@ -1,7 +1,7 @@
 # Visual Assets
 
 The consultation images are AI-generated illustrations of a fictional clinician.
-They do not depict a Medizoom employee, a verified participating doctor or a real
+They do not depict a MediZoom employee, a verified participating doctor or a real
 patient consultation. This provenance is retained here and in image alternative
 text. No actual patient documents or screenshots are used.
 
@@ -28,7 +28,7 @@ source PNGs remain in the local image-generation output, outside this repository
 ## Branding
 
 The wordmark uses live text to stay sharp, readable and accessible. The small
-`favicon.svg` is an original text-based Medizoom monogram, not a third-party logo.
+`favicon.svg` is an original text-based MediZoom monogram, not a third-party logo.
 The page uses the visitor's system fonts, so no font service or font download is
 required.
 
