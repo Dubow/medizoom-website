@@ -5,25 +5,15 @@ They do not depict a MediZoom employee, a verified participating doctor or a rea
 patient consultation. This provenance is retained here and in image alternative
 text. No actual patient documents or screenshots are used.
 
-## Consultation Photography
-
-Created on 16 October 2026 with the built-in image-generation tool, using the
-project's existing AI-generated welcome image as a visual reference. The original
-mobile repository and its asset were not modified.
+## Consultation Illustrations
 
 - `public/assets/consultation-desktop.webp`: wide consultation scene, with the
   fictional clinician on the right and uncluttered pale blue wall on the left.
 - `public/assets/consultation-mobile.webp`: portrait composition with extra wall
   above the clinician to keep the page title readable on narrow screens.
 
-Prompt brief: preserve the fictional Black woman clinician's likeness, braids,
-blue scrubs, white coat, stethoscope and silver laptop; use natural daylight and
-realistic photographic textures in an airy clinic; leave clear negative space
-for HTML text; include no logos, words, symbols or graphic overlays. The mobile
-variant places the clinician lower in the composition.
-
-Generated PNGs were mechanically encoded to WebP for efficient delivery. The
-source PNGs remain in the local image-generation output, outside this repository.
+The images are provided in WebP format for efficient delivery. Alternative text
+identifies them as illustrations rather than photographs of participating doctors.
 
 ## Branding
 

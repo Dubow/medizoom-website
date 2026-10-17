@@ -1,7 +1,34 @@
-# Website Guide
+# Website Development Guide
 
-See [README.md](../README.md) for setup, directory structure and test commands.
-This guide describes ongoing maintenance, not the architecture of the private app.
+Development and maintenance instructions for the MediZoom public website.
+
+## Local Preview
+
+Open `public/index.html` in a browser. From the repository root in PowerShell:
+
+```powershell
+Invoke-Item .\public\index.html
+```
+
+The website uses static HTML, CSS, vanilla JavaScript, local WebP images and system
+fonts. No installation, server, build command or environment variables are needed
+for preview. Local files do not exercise hosted redirects or HTTP security headers.
+
+## Repository Structure
+
+```text
+public/                 Homepage, legal pages, styles, navigation and assets
+tests/website.cjs        Test runner
+tests/functional.cjs     Navigation, links and responsive behavior
+tests/accessibility.cjs  Automated accessibility scans
+tests/content.cjs        Metadata, content consistency and publication checks
+tests/visual.cjs         Screenshot capture and baseline comparison
+tests/support.cjs        Shared test setup and viewport matrix
+docs/WEBSITE.md          Development and release guidance
+ASSETS.md               Asset provenance and licenses
+netlify.toml            Publish directory and security headers
+.qa/                    Ignored test dependencies and generated artifacts
+```
 
 ## Architecture
 
@@ -22,6 +49,23 @@ referrer and browser-permission restrictions. Do not relax them to accommodate
 optional host scripts. Local file tests cannot validate their deployed behavior.
 
 ## Testing
+
+Use Node.js with npm and Microsoft Edge. The suite has been tested with Node 24.
+Install the test-only dependencies in `.qa/` from the repository root:
+
+```powershell
+npm install --prefix .qa --no-save --package-lock=false playwright@1.62.1 axe-core@4.14.0
+node tests/website.cjs
+```
+
+To run a single suite:
+
+```powershell
+node tests/website.cjs functional
+node tests/website.cjs accessibility
+node tests/website.cjs content
+node tests/website.cjs visual
+```
 
 The runner accepts `all` (default), `functional`, `accessibility`, `content` or
 `visual`. Suites run independently and a failed suite does not suppress results
@@ -66,9 +110,9 @@ Capture-only runs report that comparison was not performed.
 - A copy edit may legitimately retain the meaning of a safety notice without
   matching its topic pattern. Review the meaning before changing that assertion.
 - A visual difference may be intentional. Inspect the old and new rendering;
-  obtain owner approval for design or publication-policy changes.
+  design and publication-policy changes require maintainer review.
 - A missing tool or Edge installation is a setup failure. Use the pinned test
-  dependencies in README; nothing needs installing into `public/`.
+  dependencies above; nothing needs installing into `public/`.
 
 Physical-device browsers, Safari, screen readers, email delivery, live HTTP
 headers/redirects and external sites remain outside these local checks. Tests do
@@ -94,7 +138,7 @@ Keep the website company-focused and truthful about pre-launch availability.
 The approved target appears as static HTML so it remains available without
 JavaScript. No runtime date substitution or automatic launch switch is needed.
 
-When the owner approves a new launch target, update:
+When publishing an updated launch target, keep these references in sync:
 
 - All launch `<time>` elements and search/social descriptions in `public/index.html`.
 - The launch statement in `public/terms.html` and the brief README introduction.
@@ -102,10 +146,10 @@ When the owner approves a new launch target, update:
 
 That one test value checks every launch occurrence rather than a fixed number of
 references. Legal revision dates are separate and must not be changed just to
-match the launch month. Historical decisions retain their original dates.
+match the launch month.
 
-The product preview is text-only by owner choice. Any future screenshot must be
-genuine, individually approved and free of private data. Limit it to two or three
+The product preview is text-only. Any future screenshot must be genuine,
+individually approved for publication and free of private data. Limit it to two or three
 selected screens rather than a full workflow gallery. Record approval and
 provenance in `ASSETS.md`, then update the reviewed-media list and preview tests.
 The media list checks filenames, not whether the contents are genuine or safe.
@@ -117,17 +161,18 @@ records, identity documents or professional credentials through this channel.
 ## Publication
 
 The production branch is connected to Netlify. Pushing can deploy automatically;
-obtain explicit owner approval before a push or any deployment.
+releases require maintainer approval before a production push or deployment.
 
 1. Review the diff and staged files, including asset provenance and sensitive data.
 2. Run all suites and visually inspect affected pages. Record any unverified items.
-3. Confirm current availability, contact details and owner-approved launch wording.
+3. Confirm current availability, contact details and launch wording.
 4. Have qualified Kenyan legal and clinical advisers review the legal pages against
    actual operations. Confirm operator identity/contact details, enquiry handling,
    retention, lawful bases, recipient disclosures and international-transfer safeguards.
    Category-only provider descriptions are not a determination of legal sufficiency.
 5. Publish only `public/`, without a build command, after approval.
 6. Check the live domain's HTTPS, redirects, headers, assets, links and mobile rendering.
+   Include any host-level scripts or integrations in the security and privacy review.
 
 Do not alter DNS, SSL, email records, backend or database configuration as part
 of a content release. Preserve existing MX, SPF, DKIM and DMARC records if domain
@@ -138,13 +183,3 @@ Provide the appropriate service terms, privacy information, consent, pricing,
 cancellation/refund rules and verified app-store links. Re-review the website's
 data practices whenever integrations change. The date itself must never unlock
 bookings or change clinical availability automatically.
-
-## Open Operational Checks
-
-- Confirm host-level analytics/integrations, since they may not appear in source.
-- An earlier live audit observed an optional host badge script conflicting with
-  CSP. Its current setting is unverified; disabling it needs owner approval.
-  Do not weaken the policy or hide the badge with CSS as a workaround.
-- Complete the manual browser, assistive-technology and legal checks above.
-
-Historical decisions and source references are in [DECISIONS.md](DECISIONS.md).

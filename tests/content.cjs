@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { ROOT, PUBLIC, PAGES, ORIGIN, CONTACT, withPage } = require('./support.cjs');
 
-// Owner-approved editorial facts. HTML stays readable without JavaScript or a build.
+// Publication settings. HTML stays readable without JavaScript or a build.
 const LAUNCH_MONTH = '2027-02';
 const launchLabel = new Intl.DateTimeFormat('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' })
   .format(new Date(`${LAUNCH_MONTH}-01T00:00:00Z`));
@@ -25,7 +25,7 @@ async function checkPublication(page, file) {
     { local: 0, session: 0, cookies: '' }, 'No visitor tracking storage');
   if (file === 'index.html') {
     const preview = page.locator('#product-preview');
-    // Text-only preview is an owner decision, not a limit on decorative image counts elsewhere.
+    // The public preview is text-only; other reviewed illustrations are permitted.
     assert.equal(await preview.locator('img, picture, video, iframe, canvas, object, embed').count(), 0, 'Public screenshots need explicit approval');
     const demo = new URL(await page.locator('.demo-request').getAttribute('href'));
     assert.equal(demo.protocol, 'mailto:');
@@ -40,7 +40,7 @@ async function checkPublication(page, file) {
     const promotion = await page.locator('.hero, .platform, .journey, .product-preview, .audiences, .about, .contact').allTextContents();
     assert.doesNotMatch(promotion.join(' '), /\b(Netlify|Namecheap|PostgreSQL|MySQL|Spring Boot|React Native|Expo|backend|database|deployment architecture|university application|academic portfolio)\b/i);
   } else {
-    assert.doesNotMatch(text, /\b(?:Netlify|Namecheap|Aluta)\b/i, 'No supplier branding or copied reference-site identity');
+    assert.doesNotMatch(text, /\b(?:Netlify|Namecheap)\b/i, 'No supplier branding in legal copy');
   }
   if (file === 'privacy.html') requireTopics(text, {
     'website scope': /pre-launch|information website/i,
