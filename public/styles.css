@@ -87,6 +87,13 @@ h1 { font-size: 80px; line-height: 1.08; }
 .verification-grid article:nth-child(2) { border-color: var(--blue); }
 .verification-grid article:nth-child(3) { border-color: var(--coral); }
 
+.product-preview { border-top: 1px solid var(--line); }
+.preview-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 80px; align-items: start; }
+.preview-description { margin-top: 22px; max-width: 500px; }
+.demo-invitation h3 { font-size: 23px; margin-bottom: 16px; }
+.demo-request { margin-top: 24px; max-width: 100%; }
+.demo-note { margin-top: 16px; font-size: 14px; max-width: 460px; }
+
 .audiences { background: var(--mint); }
 .audience-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 80px; }
 .audience + .audience { border-left: 1px solid #cedfd6; padding-left: 60px; }
@@ -123,6 +130,7 @@ details a { overflow-wrap: anywhere; }
 .contact-inner { display: grid; grid-template-columns: 1fr 360px; gap: 60px; align-items: center; }
 .contact h2 { margin-bottom: 20px; }
 .contact .eyebrow { color: var(--blue); }
+.contact .text-link { color: var(--teal-dark); }
 .contact-action { display: flex; flex-direction: column; align-items: flex-start; }
 .contact-email { font-size: 16px; margin-top: 17px; color: var(--teal-dark); }
 .contact-action p { font-size: 13px; margin-top: 14px; max-width: 330px; }
@@ -180,6 +188,7 @@ details a { overflow-wrap: anywhere; }
   .hero-status span + span { padding-left: 10px; }
   .section { padding-block: 64px; }
   .section-intro { gap: 40px; }
+  .preview-grid { gap: 40px; }
   .journey-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .verification-grid { gap: 28px; }
   .platform-features h3 { font-size: 20px; }
@@ -215,6 +224,7 @@ details a { overflow-wrap: anywhere; }
   .platform-features article > p:last-child { font-size: 16px; }
   .launch-note { margin-top: 28px; }
   .audience-grid { grid-template-columns: 1fr; gap: 36px; }
+  .preview-grid { grid-template-columns: 1fr; gap: 32px; }
   .audience + .audience { border-left: 0; border-top: 1px solid #cedfd6; padding: 36px 0 0; }
   .feature-list { margin-block: 22px; }
   .about-intro { gap: 24px; }

@@ -63,12 +63,28 @@ async function main() {
       assert.equal(await page.locator('footer .legal-links a').count(), 3);
       assert.equal(await page.locator('time[datetime="2026-12-20"]').count(), 4);
       assert.equal((await page.locator('meta[name="description"]').getAttribute('content')).includes('20 December 2026'), true);
+      const preview = page.locator('#product-preview');
+      assert.equal(await preview.getByRole('heading', { name: 'A closer look at MediZoom.' }).count(), 1);
+      // The owner chose text-only. Change this only with explicit image approval.
+      assert.equal(await page.locator('img').count(), 1, 'Only the existing illustrative hero is approved');
+      assert.equal(await preview.locator('img, picture, video, iframe, form, input').count(), 0);
+      const demoRequest = preview.getByRole('link', { name: 'Request a Private Demo' });
+      const demoUrl = new URL(await demoRequest.getAttribute('href'));
+      assert.equal(demoUrl.protocol, 'mailto:');
+      assert.equal(demoUrl.pathname, 'support@medizoom.care');
+      assert.equal(demoUrl.searchParams.get('subject'), 'MediZoom private demo request');
+      assert.match(await preview.innerText(), /arranged manually/);
+      assert.match(await preview.innerText(), /does not provide automatic application access/);
+      await demoRequest.focus();
+      assert.equal(await demoRequest.evaluate(el => el === document.activeElement), true);
+      await page.locator('.hero .button').focus();
+      await page.evaluate(() => window.scrollTo(0, 0));
       assert.deepEqual(errors, []);
       assert.equal(requests.every(url => url.startsWith('file:')), true, 'Unexpected external request');
       await page.screenshot({ path: path.resolve('.qa/' + name + '-top.png') });
       await page.screenshot({ path: path.resolve('.qa/' + name + '-full.png'), fullPage: true });
       if (['desktop', 'mobile', 'small-mobile'].includes(name)) {
-        for (const section of ['platform', 'how-it-works', 'patients', 'doctors', 'doctor-verification', 'about', 'contact']) {
+        for (const section of ['platform', 'how-it-works', 'product-preview', 'patients', 'doctors', 'doctor-verification', 'about', 'contact']) {
           await page.locator('#' + section).screenshot({ path: path.resolve('.qa/' + name + '-' + section + '.png') });
         }
       }
@@ -139,6 +155,7 @@ async function main() {
     for (const link of await fallbackPage.locator('.main-nav a').all()) assert.equal(await link.isVisible(), true);
     await fallbackPage.locator('.main-nav a[href="#patients"]').click();
     assert.ok(fallbackPage.url().endsWith('#patients'));
+    assert.equal(await fallbackPage.locator('.demo-request').getAttribute('href'), 'mailto:support@medizoom.care?subject=MediZoom%20private%20demo%20request');
     await fallbackPage.close();
 
     fs.writeFileSync('.qa/results.json', JSON.stringify(results, null, 2));
@@ -161,6 +178,18 @@ async function checkPages(browser) {
       page.on('pageerror', error => errors.push(error.message));
       await page.goto(pathToFileURL(path.resolve('public', file)).href);
       assert.equal(await page.locator('h1').count(), 1, file + ' single main heading');
+      if (file === 'privacy.html') {
+        const notice = await page.locator('main').innerText();
+        assert.match(notice, /Netlify/);
+        assert.match(notice, /Namecheap Private Email/);
+        assert.match(notice, /outside Kenya/);
+        assert.match(notice, /technical request information/);
+        assert.match(notice, /data processing agreement/);
+      }
+      if (file === 'index.html') {
+        const promotionalCopy = await page.locator('.hero, .platform, .journey, .product-preview, .audiences, .about, .contact').allTextContents();
+        assert.doesNotMatch(promotionalCopy.join(' '), /\b(Netlify|Namecheap|PostgreSQL|MySQL|Spring Boot|React Native|Expo|backend|database|deployment architecture)\b/i);
+      }
       const expectedUrl = 'https://medizoom.care/' + (file === 'index.html' ? '' : file);
       assert.equal(await page.locator('link[rel="canonical"]').getAttribute('href'), expectedUrl);
       const description = await page.locator('meta[name="description"]').getAttribute('content');

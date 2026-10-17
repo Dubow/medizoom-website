@@ -92,12 +92,16 @@ For general or professional enquiries, contact
 This address is not a clinical or emergency service. Please do not send medical
 records, identity documents, professional licences or urgent medical requests.
 
+Healthcare professionals and potential partners can
+[request a private demo](mailto:support@medizoom.care?subject=MediZoom%20private%20demo%20request).
+Requests are reviewed and demonstrations arranged manually, subject to availability.
+A request does not grant automatic application access.
+
 ---
 
 ## About This Repository
 
-This repository contains Medizoom's public website. It is separate from the
-mobile application and backend and has no connection to clinical data.
+This repository contains Medizoom's public pre-launch website.
 
 For local preview and maintenance, see the [website guide](docs/WEBSITE.md).
 Image provenance is documented in [ASSETS.md](ASSETS.md).

@@ -132,10 +132,9 @@ Necessary improvements identified and prepared locally:
 
 Still required before publishing this revision:
 
-- Obtain current, owner-approved screenshots from the real application, using only
-  fictional demonstration data. Do not use earlier private screenshots, fabricate
-  app screens or present the illustrative hero clinician as a participating doctor.
-  The gallery is intentionally not rendered until suitable assets are supplied.
+- The owner selected a text-only product preview on 17 October 2026. Screenshots
+  are optional, not a prerequisite for publication. Do not add them without
+  specific approval or present the illustrative hero as a participating doctor.
 - Confirm the approved operator identity and business contact details for the
   website's legal notices. Brand and support email alone are not a completed legal
   identity disclosure. Do not invent an entity, office or registration information.
@@ -164,19 +163,60 @@ Policy and credential references reviewed for this work:
 These sources support the distinctions and provider references, not claims of
 MediZoom approval, certification, affiliation or completed verification.
 
-## App Screenshot Handoff
+## Product Preview and Private Demos
 
-Request 3-5 real app captures, ideally patient home, doctor profile, booking and
-prescription views. Replace personal data in the app with fictional demo data
-before capture. Exclude real faces, names, messages, medical records, QR codes,
-document identifiers, payment details, email addresses and authentication details.
-Obtain publication approval for every image.
+The "A closer look at MediZoom" section follows the planned patient journey.
+It is deliberately text-only by the owner's decision on 17 October 2026. The
+attached app captures were reviewed but were not approved for publication and
+have not been copied into the repository. Do not add empty device frames, a
+fictional interface, a hidden screenshot gallery or a claim that images are shown.
 
-When supplied, place an unframed gallery after the patient journey, with factual
-captions identifying the development preview. Use locally stored, appropriately
-sized WebP files, explicit image dimensions and lazy loading below the fold.
-Preserve enough resolution to read the screen; do not crop away context or generate
-replacement interfaces. Record provenance in `ASSETS.md` and rerun all checks.
+Any future public preview is limited to two or three carefully selected, genuine
+app screenshots with explicit approval for each image. Do not turn it into a full
+feature gallery or expose internal workflows. Replace personal data in the app
+with fictional demo data before capture; exclude real faces, names, messages,
+medical records, identifiers, payment details and authentication information.
+Prefer fresh, clean captures rather than altering an interface to conceal content.
+
+If approved later, place the images in this same section with factual development
+preview captions, local WebP files, explicit dimensions and lazy loading. Maintain
+readable screen content, record provenance and approval in `ASSETS.md`, and update
+the test that currently requires the homepage to contain only its existing hero
+image. No automated upload, discovery or publishing mechanism is provided.
+
+The demo action opens a draft in the visitor's email application addressed to
+`support@medizoom.care` with the subject `MediZoom private demo request`. It does
+not send the email, submit a form, book a meeting, create an account or grant
+application access. Requests are intended primarily for healthcare professionals
+and potential partners and must be reviewed and arranged manually. Do not expose
+test accounts, credentials, patient data or internal application URLs.
+
+## Infrastructure Disclosure Audit
+
+Reviewed on 17 October 2026. The homepage's promotional sections contain no
+hosting-provider names, backend frameworks, database technologies or deployment
+architecture. No such material needed removal from those sections. The public
+README's repository note was shortened to omit internal application references.
+
+The privacy FAQ still mentions technical request logs and links to the full
+privacy notice. `public/privacy.html` is unchanged: it retains the hosting and
+email provider names, provider policy and processing-agreement links, information
+categories, retention wording, international-processing disclosure, rights and
+contact information. Those disclosures were not removed as promotional detail.
+This is a content-scope audit, not a new determination of legal compliance.
+
+Hosting and implementation instructions remain in this maintenance guide, not
+promotional copy. This revision does not change `netlify.toml`, DNS, certificates,
+deployment configuration, the mobile application, backend or database. Publishing
+still requires a separate explicit approval.
+
+Validation on 17 October 2026: all 12 responsive layouts and 13 axe accessibility
+scans passed after darkening the new contact-section link. Existing menu, FAQ,
+keyboard, no-JavaScript, local-link, metadata and sitemap checks passed. New checks
+verify the text-only preview, the demo email recipient and subject, manual-review
+wording and the retained privacy disclosures. Desktop and small-screen previews
+were visually inspected. No demo email was sent; no changes were committed,
+pushed or deployed during this revision.
 
 ## Launch Transition
 
