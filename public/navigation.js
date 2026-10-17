@@ -52,7 +52,18 @@
   });
 
   header.addEventListener('focusout', event => {
-    if (event.relatedTarget && !header.contains(event.relatedTarget)) setOpen(false);
+    if (event.relatedTarget && !header.contains(event.relatedTarget)) {
+      setOpen(false);
+    } else if (!event.relatedTarget) {
+      // CSS can hide the focused control before the matchMedia change event runs.
+      const hiddenToggle = event.target === toggle && !smallScreen.matches;
+      const hiddenLink = navigation.contains(event.target) && smallScreen.matches &&
+        !header.classList.contains('menu-open');
+      if (hiddenToggle || hiddenLink) {
+        const destination = smallScreen.matches ? toggle : navigation.querySelector('a');
+        destination.focus({ preventScroll: true });
+      }
+    }
   });
 
   smallScreen.addEventListener('change', () => {

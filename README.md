@@ -1,107 +1,84 @@
-# MediZoom
+# MediZoom Website
 
-### Care, closer to you.
+The public pre-launch website for [MediZoom](https://medizoom.care), a
+telemedicine platform in development for Kenya. **Targeting February 2027**;
+public consultations and bookings are not open.
 
-**Connecting patients, doctors and the next step in care.**
+This repository contains the company website only, not the mobile application,
+clinical services or backend. Private demonstrations are requested through
+[support@medizoom.care](mailto:support@medizoom.care?subject=MediZoom%20private%20demo%20request)
+and arranged manually. The site does not create accounts or collect medical data.
 
-MediZoom is building a digital health platform for Kenya. We bring the journey
-around a consultation into focus: finding a doctor, arranging a visit, staying
-in touch and keeping important care information together.
+## Stack
 
-Our ambition is straightforward: make it easier for patients and doctors to
-connect and keep care coordinated.
+- Static HTML and CSS, with a small vanilla JavaScript mobile menu.
+- Local WebP imagery and system fonts; no runtime packages or build step.
+- Playwright with Microsoft Edge and axe-core for local testing only.
+- Netlify publishes `public/`; security headers are defined in `netlify.toml`.
 
-**Targeting February 2027 for launch in Kenya.** This is a target, not a confirmed
-opening date. Public appointments and consultations are not yet available.
+## Repository Layout
 
-**Website domain:** [medizoom.care](https://medizoom.care)  
-**Contact:** [support@medizoom.care](mailto:support@medizoom.care)
+```text
+public/                 Publishable homepage, legal pages, styles, script and assets
+tests/website.cjs        Test runner (all suites or one selected suite)
+tests/functional.cjs     Navigation, links, responsive geometry and no-JS behavior
+tests/accessibility.cjs  Automated axe scans
+tests/content.cjs        Launch consistency, metadata and publication safeguards
+tests/visual.cjs         Screenshot capture and optional baseline comparison
+tests/support.cjs        Shared browser setup, paths and viewport matrix
+docs/WEBSITE.md          Maintenance, testing details and publication checklist
+docs/DECISIONS.md        Relevant historical decisions and review caveats
+ASSETS.md               Image provenance and icon licensing
+netlify.toml            Publish directory and HTTP security headers
+.qa/                    Ignored test dependencies, reports and visual artifacts
+```
 
-## A More Connected Care Experience
+## Local Preview
 
-Healthcare does not begin and end with an appointment. It includes the choices
-before a consultation, the conversation itself and the information people need
-afterwards.
+Open `public/index.html` in a browser. In PowerShell from this directory:
 
-MediZoom is bringing these steps together in one mobile experience.
+```powershell
+Invoke-Item .\public\index.html
+```
 
-| Find care | Connect with your doctor | Keep care organized |
-| --- | --- | --- |
-| Explore doctor profiles and specialties. | Arrange a consultation around available times. | Keep prescriptions and visit information together. |
-| Learn about a doctor's professional background. | Continue the conversation and share relevant documents. | Return to the information needed for follow-up. |
-| Make a more informed choice. | Coordinate agreed appointment changes. | Maintain continuity between visits. |
+No server, installation or environment variables are needed to preview the site.
+The mobile navigation also works without JavaScript. A file preview does not
+exercise the HTTP security headers or redirects configured by the host.
 
-These describe the platform we are building, not services currently offered
-through this website.
+## Tests
 
-## The Planned Patient Journey
+Install Node.js with npm and Microsoft Edge. The suite was tested with Node 24.
+From the repository root, install the existing test-only tools into `.qa/`:
 
-1. Explore doctor profiles and specialties.
-2. Select an available time, review the consultation fee and complete booking.
-3. Attend an online consultation, with in-person assessment where needed.
-4. Return to visit records, any prescription issued and the conversation with your doctor.
+```powershell
+npm install --prefix .qa --no-save --package-lock=false playwright@1.62.1 axe-core@4.14.0
+node tests/website.cjs
+```
 
-Online care is not suitable for every concern and does not guarantee a prescription.
+Run one suite when iterating:
 
-## For Patients
+```powershell
+node tests/website.cjs functional
+node tests/website.cjs accessibility
+node tests/website.cjs content
+node tests/website.cjs visual
+```
 
-A clearer path from choosing a doctor to understanding what comes next.
+Results are written to `.qa/report.json`. Screenshots are saved in
+`.qa/visual/current/`. A normal run captures screenshots but does **not** claim
+visual regression comparison. See the [testing guide](docs/WEBSITE.md#testing)
+for explicitly saved baselines, comparison and known limitations.
 
-- Discover professional profiles and specialties in one place.
-- Coordinate appointments and conversations without losing context.
-- Keep shared documents, prescriptions and visit records organized.
+## Deployment Boundaries
 
-## For Doctors
+Publish **only `public/`**, with no build command. A push to the connected
+production branch can trigger an automatic Netlify deployment. Obtain owner
+approval before pushing or deploying; a local commit does not publish the site.
 
-A dedicated space for the work around each consultation.
+Keep private app source, credentials, medical information and test artifacts out
+of the publish directory and Git history. Changes to the separate application,
+database, DNS or email configuration are outside this repository's scope.
 
-- Present a professional profile and submit credentials for review.
-- Manage availability, appointments and agreed schedule changes.
-- Keep patient communication and prescription information connected.
-
-## What Guides Us
-
-**People first.** The needs of patients and doctors guide what we build.
-
-**Clarity at every step.** Finding a doctor, arranging care and returning to a
-record should be easy to understand.
-
-**Respect for privacy.** Personal health information deserves careful handling.
-That responsibility guides our development and preparation for launch.
-
-## Preparing for Launch
-
-MediZoom is in development. We are refining the patient and doctor experience,
-completing service integrations and preparing the operational foundations for
-public availability.
-
-This website introduces MediZoom. It does not provide consultations, accept
-bookings or collect clinical information.
-
-The planned doctor onboarding process includes reviewing registration certificates,
-current annual practising licences and specialist evidence where applicable,
-checking submitted details against the official KMPDC register and reviewing
-renewal evidence. This is a description of the planned process, not a claim of
-completed checks, regulatory approval or endorsement.
-
-## Get in Touch
-
-For general or professional enquiries, contact
-[support@medizoom.care](mailto:support@medizoom.care).
-
-This address is not a clinical or emergency service. Please do not send medical
-records, identity documents, professional licences or urgent medical requests.
-
-Healthcare professionals and potential partners can
-[request a private demo](mailto:support@medizoom.care?subject=MediZoom%20private%20demo%20request).
-Requests are reviewed and demonstrations arranged manually, subject to availability.
-A request does not grant automatic application access.
-
----
-
-## About This Repository
-
-This repository contains MediZoom's public pre-launch website.
-
-For local preview and maintenance, see the [website guide](docs/WEBSITE.md).
-Image provenance is documented in [ASSETS.md](ASSETS.md).
+Before release, follow the [publication checklist](docs/WEBSITE.md#publication).
+Legal and clinical wording requires qualified review; automated checks do not
+establish legal compliance, medical suitability or complete accessibility.
