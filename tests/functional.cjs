@@ -13,6 +13,36 @@ async function checkLayout(page, label) {
   assert.deepEqual(issues, [], `${label}: horizontal overflow`);
 }
 
+async function checkBranding(page, label) {
+  const brandLinks = page.locator('.brand-link');
+  assert.ok(await brandLinks.count(), `${label}: brand link present`);
+  for (const brand of await brandLinks.all()) {
+    assert.match(await brand.getAttribute('aria-label'), /MediZoom/, `${label}: named home link`);
+    const mark = brand.locator('.brand-mark');
+    assert.equal(await mark.isVisible(), true, `${label}: brand symbol visible`);
+    assert.equal(await mark.getAttribute('alt'), '', 'Home link supplies the accessible brand name');
+    assert.equal(await mark.evaluate(img => {
+      const box = img.getBoundingClientRect();
+      const link = img.closest('a').getBoundingClientRect();
+      return img.complete && img.naturalWidth > 0 && box.height > 0 &&
+        Math.abs(box.width / box.height - img.naturalWidth / img.naturalHeight) < 0.01 &&
+        link.width >= 44 && link.height >= 44 &&
+        box.left >= link.left && box.right <= link.right + 1 &&
+        box.top >= link.top && box.bottom <= link.bottom + 1;
+    }), true, `${label}: decoded, proportional symbol and accessible target size`);
+  }
+  const collisions = await page.locator('.header-inner').evaluate(header => {
+    const items = [...header.children].map(el => ({
+      name: el.className, box: el.getBoundingClientRect()
+    })).filter(({ box }) => box.width > 0 && box.height > 0);
+    return items.flatMap((a, index) => items.slice(index + 1).filter(b =>
+      Math.min(a.box.right, b.box.right) - Math.max(a.box.left, b.box.left) > 1 &&
+      Math.min(a.box.bottom, b.box.bottom) - Math.max(a.box.top, b.box.top) > 1
+    ).map(b => `${a.name} / ${b.name}`));
+  });
+  assert.deepEqual(collisions, [], `${label}: header controls overlap`);
+}
+
 async function checkNavigation(page) {
   const toggle = page.locator('.menu-toggle');
   const navigation = page.locator('#main-navigation');
@@ -83,6 +113,7 @@ module.exports = async function functional(browser) {
   for (const { name, width, height } of VIEWPORTS) {
     await withPage(browser, 'index.html', { width, height }, async page => {
       await checkLayout(page, name);
+      await checkBranding(page, name);
       for (const selector of ['.hero h1', '.hero-status', '.hero-tagline', '.hero .button']) {
         assert.equal(await page.locator(selector).isVisible(), true, `${name}: ${selector} visible`);
         assert.equal(await page.locator(selector).evaluate(el => {
@@ -119,9 +150,10 @@ module.exports = async function functional(browser) {
       for (const required of ['privacy.html', 'terms.html', 'medical-disclaimer.html']) assert.ok(legalLinks.includes(required));
       if (file !== 'index.html') {
         assert.equal(await page.locator('.legal-links [aria-current="page"]').getAttribute('href'), file);
-        for (const width of [320, 768, 1440]) {
+        for (const width of [280, 320, 370, 371, 390, 768, 1440]) {
           await page.setViewportSize({ width, height: 900 });
           await checkLayout(page, `${file} ${width}`);
+          await checkBranding(page, `${file} ${width}`);
         }
         await page.locator('.skip-link').focus();
         await page.keyboard.press('Enter');
@@ -146,6 +178,7 @@ module.exports = async function functional(browser) {
   });
   await withPage(browser, 'index.html', { width: 390, height: 844 }, async page => {
     assert.equal(await page.locator('.menu-toggle').isVisible(), false);
+    await checkBranding(page, 'No JavaScript');
     for (const link of await page.locator('#main-navigation a').all()) assert.equal(await link.isVisible(), true);
     await page.locator('#main-navigation a[href="#patients"]').click();
     assert.equal(new URL(page.url()).hash, '#patients');

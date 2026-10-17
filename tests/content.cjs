@@ -8,7 +8,10 @@ const LAUNCH_MONTH = '2027-02';
 const launchLabel = new Intl.DateTimeFormat('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' })
   .format(new Date(`${LAUNCH_MONTH}-01T00:00:00Z`));
 const monthYear = /\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}\b/g;
-const approvedMedia = new Set(['assets/consultation-desktop.webp', 'assets/consultation-mobile.webp', 'assets/favicon.svg']);
+const approvedMedia = new Set([
+  'assets/consultation-desktop.webp', 'assets/consultation-mobile.webp',
+  'assets/medizoom-mark.svg', 'assets/favicon.svg'
+]);
 
 function checkLaunchText(text, label) {
   for (const date of text.match(monthYear) || []) assert.equal(date, launchLabel, `${label}: inconsistent launch month`);
@@ -148,6 +151,19 @@ module.exports = async function content(browser) {
     });
   }
   await withPage(browser, 'index.html', { width: 1440, height: 900 }, async page => {
+    const symbolPaths = [];
+    for (const asset of ['medizoom-mark.svg', 'favicon.svg']) {
+      symbolPaths.push(await page.evaluate(source => {
+        const svg = new DOMParser().parseFromString(source, 'image/svg+xml');
+        if (svg.querySelector('parsererror')) throw new Error('Invalid brand SVG');
+        if (svg.querySelector('script, foreignObject, image, use')) throw new Error('Brand SVG must be self-contained');
+        return [...svg.querySelectorAll('path')].map(node => ({
+          d: node.getAttribute('d'), fillRule: node.getAttribute('fill-rule')
+        }));
+      }, fs.readFileSync(path.join(PUBLIC, 'assets', asset), 'utf8')));
+    }
+    assert.ok(symbolPaths[0].length, 'Brand symbol must contain artwork');
+    assert.deepEqual(symbolPaths[1], symbolPaths[0], 'Favicon uses the same brand symbol');
     const urls = await page.evaluate(xml => {
       const doc = new DOMParser().parseFromString(xml, 'application/xml');
       if (doc.querySelector('parsererror')) throw new Error('Invalid sitemap XML');

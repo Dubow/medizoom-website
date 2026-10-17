@@ -17,10 +17,14 @@ identifies them as illustrations rather than photographs of participating doctor
 
 ## Branding
 
-The wordmark uses live text to stay sharp, readable and accessible. The small
-`favicon.svg` is an original text-based MediZoom monogram, not a third-party logo.
-The page uses the visitor's system fonts, so no font service or font download is
-required.
+`public/assets/medizoom-mark.svg` is the MediZoom MZ symbol with an inset medical
+cross, prepared as a lightweight vector from an AI-assisted design concept.
+`public/assets/favicon.svg` uses the same artwork on a white background for
+browser tabs. Keep the symbol paths consistent when updating either asset.
+
+Headers and the homepage footer use the symbol on its own, with accessible
+home-link labels. The homepage heading keeps the full MediZoom name as live
+text using system fonts, without a font download.
 
 ## Navigation Icons
 
